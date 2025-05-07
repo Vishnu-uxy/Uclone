@@ -1,9 +1,12 @@
 package com.user.service.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,7 +34,7 @@ public class userController {
         }
     }
     
-    @PutMapping
+    @PutMapping("/update-user")
     public ResponseEntity<String> updateUser(@RequestParam Long userid ,@RequestBody userModel user){
     	String result=service.updateProfile(userid, user);
     	if(result.equals("Profile updated successfully!")) {
@@ -40,5 +43,10 @@ public class userController {
     	else {
     		return new ResponseEntity<>(result,HttpStatus.CONFLICT);
     	}
+    }
+    
+    @GetMapping("/get-allUser")
+    public List<userModel> findAllUser(){
+    	return service.userDetails();
     }
 }
