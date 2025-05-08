@@ -6,26 +6,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
-import com.user.service.Repo.userRepo;
-import com.user.service.model.userModel;
+import com.user.service.Repo.UserRepo;
+import com.user.service.model.UserModel;
 
+
+
+
+@Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 	
 	@Autowired
-	private userRepo repo;
+	private UserRepo repo;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		// TODO Auto-generated method stub
-		Optional<userModel> Optionaluser=repo.findByUsername(username);
+		Optional<UserModel> Optionaluser=repo.findByUsername(username);
 		if(Optionaluser.isEmpty()) {
 			throw new RuntimeException("user does not exist");
 		}
-		userModel user=Optionaluser.get();
+		UserModel user=Optionaluser.get();
 		UserDetails userDetails=org.springframework.security.core.userdetails.User.builder().username(user.getUsername())
 				.password(user.getPassword()).
-				roles(user.getRole().toArray(new String[0])).
+				.authorities(authorities) 
 				build();
 		return userDetails;
 	}

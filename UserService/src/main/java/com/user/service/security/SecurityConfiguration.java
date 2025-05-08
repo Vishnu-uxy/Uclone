@@ -10,31 +10,45 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.user.service.jwt.JwtFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
-	
-	@Autowired
-	private UserDetailsServiceImpl userDetailsService;
 
-	@Bean
-	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-	    http.authorizeHttpRequests(auth -> 
-	            auth.requestMatchers("/user/register", "/user/update-user", "/user/get-allUser").permitAll()
-	                .anyRequest().authenticated())
-	        .csrf(csrf -> csrf.disable());  // Disable CSRF for testing
-	    return http.build();
-	}
-	
-	@Bean
-	protected configure(AuthenticationManagerBuilder auth) throws Exception{
-		auth.userDetailsService(userDetailsService).passwordEncoder(passwordencoder());
-		
-	}
-	@Bean
-	public PasswordEncoder passwordencoder() {
-		return new BCryptPasswordEncoder();
-	}
+    private final UserDetailsServiceImpl userDetailsService;
+    
+    @Autowired
+    private JwtFilter jwtfilter;
 
+    public SecurityConfiguration(UserDetailsServiceImpl userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
+
+    @Bean
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> 
+                auth.requestMatchers("/user/register", "/user/login").permitAll()
+                    .anyRequest().authenticated())
+            .addFilterBefore(jwtfilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+        return http.getSharedObject(AuthenticationManagerBuilder.class)
+                .userDetailsService(userDetailsService)
+                .passwordEncoder(passwordEncoder())
+                .and()
+                .build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }

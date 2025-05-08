@@ -3,7 +3,9 @@ package com.user.service.model;
 import java.util.List;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -13,7 +15,7 @@ import lombok.Data;
 
 @Data
 @Entity
-public class userModel {
+public class UserModel {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,9 +33,9 @@ public class userModel {
     @NotNull
     private String lastName;
     
-    @Column
-    @NotNull
-    private List<String> role;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> roles;
+
     
     @Pattern(
             regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{9,}$",
