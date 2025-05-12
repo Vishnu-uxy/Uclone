@@ -1,22 +1,16 @@
 package com.user.service.model;
 
-import java.util.List;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import java.util.Set;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
 @Entity
+@Table(name = "user_model")
 public class UserModel {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
@@ -25,26 +19,20 @@ public class UserModel {
     @NotNull
     private String username;
     
-    @Column
     @NotNull
-    private String firstName; // Fixed typo "fisrstName" to "firstName"
-    
-    @Column
+    private String firstName;
+
     @NotNull
     private String lastName;
-    
-    @ElementCollection(fetch = FetchType.EAGER)
-    private List<String> roles;
 
-    
-    @Pattern(
-            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{9,}$",
-            message = "Password must contain at least one uppercase letter, one lowercase letter, one number, one special character, and be at least 9 characters long."
-        )
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "role")
+    private Set<String> roles;
+
+    @Size(min = 9, message = "Password must be at least 9 characters long.")
     @NotNull
     private String password;
-    
-    
-    
-  
+
+    public UserModel() {}
 }

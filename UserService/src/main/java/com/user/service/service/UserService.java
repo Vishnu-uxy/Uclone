@@ -1,6 +1,7 @@
 package com.user.service.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,7 +45,9 @@ public class UserService {
 			user.setUsername(updatedUser.getUsername());
 			user.setFirstName(updatedUser.getFirstName());
 			user.setLastName(updatedUser.getLastName());
-			user.setRoles(new ArrayList<>(updatedUser.getRoles()));
+			user.setRoles(new HashSet<>(updatedUser.getRoles()));
+
+
 
 			user.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
 
