@@ -26,7 +26,7 @@ public class Ride {
 	@Column(name="user_id",nullable=false)
 	private int user_id;
 
-	@Column(name="driver_id",nullable=false)
+	@Column(name="driver_id")
 	private Integer driverId;
 
 	@Column(name="status",nullable=false,length=20)
